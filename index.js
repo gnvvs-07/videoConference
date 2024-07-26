@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-
+import dotenv from "dotenv"
+dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -16,6 +17,10 @@ const io = new Server(server, {
     origin: "*", // You can specify your frontend URL here for better security
     methods: ["GET", "POST"],
   },
+});
+
+app.get("/", (req, res, next) => {
+  res.send("server running");
 });
 
 // Start the server
