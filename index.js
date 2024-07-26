@@ -21,30 +21,30 @@ const io = new Server(server, {
   },
 });
 
-app.get("/", (req, res, next) => {
-  res.send("server running");
+app.get("/", (req, res) => {
+  res.send("Server running");
 });
 
 // io connection
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("A user connected:", socket.id);
   socket.emit("me", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    console.log("User disconnected:", socket.id);
     socket.broadcast.emit("connection cancelled");
   });
 
-  // user calling method
+  // User calling method
   socket.on("calluser", ({ userToCall, signalData, from, name }) => {
-    console.log("user calling method");
+    console.log("Calling user:", userToCall);
     io.to(userToCall).emit("calluser", { signal: signalData, from, name });
   });
 
-  // user accepting method
-  socket.on("answercall", (data) => {
-    console.log("user accepting method");
-    io.to(data.to).emit("answercall", data.signal);
+  // User accepting method
+  socket.on("answercall", ({ to, signal }) => {
+    console.log("Answering call for:", to);
+    io.to(to).emit("answercall", signal);
   });
 });
 
